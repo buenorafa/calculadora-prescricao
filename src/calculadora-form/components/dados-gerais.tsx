@@ -19,14 +19,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
-import { HelpCircle } from "lucide-react"; // ícone de interrogação
+import { FieldTooltip } from "@/components/field-tooltip";
 
 // Esquema de validação com Zod
 const formSchema = z.object({
@@ -91,24 +85,13 @@ export function DadosGeraisForm() {
             <FormItem>
               <FormLabel className="flex items-center gap-2">
                 Data de Nascimento
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <HelpCircle className="w-4 h-4 text-muted-foreground cursor-pointer" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <div className="p-2 w-[200px]">
-                        <p>
-                          Informe a data de nascimento do autor da infração.
-                        </p>
-                        <p>
-                          A idade influencia diretamento no prazo prescricional,
-                          nos termos do artigo 115 do CP.
-                        </p>
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <FieldTooltip side="right">
+                  <p>
+                    Informe a data de nascimento do autor da infração. <br />A
+                    idade influencia diretamento no prazo prescricional, nos
+                    termos do artigo 115 do CP.
+                  </p>
+                </FieldTooltip>
               </FormLabel>
               <FormControl>
                 <Input type="date" {...field} />
@@ -125,20 +108,13 @@ export function DadosGeraisForm() {
             <FormItem>
               <FormLabel className="flex items-center gap-2">
                 Espécie de Prescrição da Pretensão Punitiva
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <HelpCircle className="w-4 h-4 text-muted-foreground cursor-pointer" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>
-                        Informe Prescrição da Pretensão Punitiva em Concreto
-                        somente se houver sentença com trânsito em julgado para
-                        a acusação ou improvido seu recurso.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <FieldTooltip side="right">
+                  <p>
+                    Informe Prescrição da Pretensão Punitiva em Concreto somente
+                    se houver sentença com trânsito em julgado para a acusação
+                    ou improvido seu recurso.
+                  </p>
+                </FieldTooltip>
               </FormLabel>
               <FormControl>
                 <Select
