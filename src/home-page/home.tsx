@@ -1,16 +1,14 @@
-import React from "react";
 
-function Home() {
+export function Home() {
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-        <h1 className="text-4xl font-bold mb-4">Bem-vindo à Calculadora de Prescrição</h1>
-        <p className="text-lg text-gray-700 mb-8">Use o menu para começar a calcular sua prescrição.</p>
-        <img src="/CP.svg" alt="Logo Calculadora de Prescrição" className="w-32 h-32 mb-4" />
-        <a href="/calculadora" className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            Começar
-        </a>
+        <div className="flex h-full w-full flex-col items-center justify-center overflow-hidden relative">
+        <div className="absolute flex text-[#2B2823] gap-5 flex-col font-semibold text-7xl z-50 justify-center items-center bg-white/60 p-8 rounded-md fonteLogo">
+        <p>CALCULADORA</p>
+        <p>DE</p>
+        <p>PRESCRIÇÃO</p>
+        </div>
+        <img src="/Footer.png" alt="Foto escritório" className="object-cover scale-x-125 w-full opacity-100" />
         </div>
     );
-
 
 }
