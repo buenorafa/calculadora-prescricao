@@ -26,8 +26,12 @@ const pretensaoAbstratoSchema = z.object({
   penaAnos: z.coerce.number().min(0, "Campo obrigatório"),
   penaMeses: z.coerce.number().min(0, "Campo obrigatório"),
   penaDias: z.coerce.number().min(0, "Campo obrigatório"),
-  aumento: z.enum(["sim", "nao"], { required_error: "Selecione uma opção" }),
-  diminuicao: z.enum(["sim", "nao"], { required_error: "Selecione uma opção" }),
+  aumento: z.enum(["nao", "1/6", "1/5", "1/4", "1/3", "1/2", "2/3", "2x"], {
+    required_error: "Selecione uma opção",
+  }),
+  diminuicao: z.enum(["nao", "1/6", "1/5", "1/4", "1/3", "1/2", "2/3"], {
+    required_error: "Selecione uma opção",
+  }),
   tentativa: z.enum(["sim", "nao"], { required_error: "Selecione uma opção" }),
 });
 
