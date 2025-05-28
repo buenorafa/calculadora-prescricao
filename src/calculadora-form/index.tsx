@@ -3,7 +3,7 @@ import { DadosGeraisForm } from "./components/dados-gerais";
 
 function CalculadoraForm() {
   return (
-    <div>
+    <div className="w-1/2 mx-auto self-center">
       <DadosGeraisForm></DadosGeraisForm>
     </div>
   );
