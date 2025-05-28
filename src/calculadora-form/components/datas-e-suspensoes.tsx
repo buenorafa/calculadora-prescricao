@@ -19,6 +19,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { FieldTooltip } from "@/components/field-tooltip";
 
 const suspensaoSchema = z.object({
   tipo: z.string().min(1, "Informe o tipo de suspensão"),
@@ -80,7 +81,15 @@ export function DatasESuspensoesForm() {
           name="dataFato"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Data do Fato</FormLabel>
+              <FormLabel>
+                Data do Fato
+                <FieldTooltip side="right">
+                  <p>
+                    Informea data da produção do resultado vide artigo 111 do
+                    CP.
+                  </p>
+                </FieldTooltip>
+              </FormLabel>
               <FormControl>
                 <Input type="date" {...field} />
               </FormControl>
@@ -102,8 +111,7 @@ export function DatasESuspensoesForm() {
             </FormItem>
           )}
         />
-
-        <div className="space-y-2">
+        <div className="space-y-2  p-2">
           <div className="flex justify-between items-center">
             <FormLabel>Suspensões</FormLabel>
             <Button
@@ -115,7 +123,7 @@ export function DatasESuspensoesForm() {
             </Button>
           </div>
           {suspensoes.map((_, index) => (
-            <div key={index} className="grid grid-cols-4 gap-2 items-end">
+            <div key={index} className="grid grid-cols-4 gap-2 items-end p-2">
               <FormField
                 control={control}
                 name={`suspensoes.${index}.tipo`}
@@ -256,7 +264,7 @@ export function DatasESuspensoesForm() {
           )}
         />
 
-        <div className="space-y-2">
+        <div className="space-y-2 p-2">
           <div className="flex justify-between items-center">
             <FormLabel>Outras Datas</FormLabel>
             <Button
@@ -268,7 +276,7 @@ export function DatasESuspensoesForm() {
             </Button>
           </div>
           {outrasDatas.map((_, index) => (
-            <div key={index} className="grid grid-cols-3 gap-2 items-end">
+            <div key={index} className="grid grid-cols-3 gap-2 items-end p-2">
               <FormField
                 control={control}
                 name={`outrasDatas.${index}.descricao`}
