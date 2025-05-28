@@ -3,8 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
-
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormField,
@@ -15,18 +13,25 @@ import {
 } from "@/components/ui/form";
 
 import { FieldTooltip } from "@/components/field-tooltip";
+import { FormWrapper } from "./form-wrapper";
+import { useCalculoPrescricao } from "../../context/calculo-prescricao-context";
 
-const pretensaoAbstratoSchema = z.object({
+const pretensaoConcretoSchema = z.object({
   penaAnos: z.coerce.number().min(0, "Campo obrigatório"),
   penaMeses: z.coerce.number().min(0, "Campo obrigatório"),
   penaDias: z.coerce.number().min(0, "Campo obrigatório"),
 });
 
-type PretensaoConcretoData = z.infer<typeof pretensaoAbstratoSchema>;
+type PretensaoConcretoData = z.infer<typeof pretensaoConcretoSchema>;
 
-export function PretensaoConcretoForm() {
+interface Props {
+  onNext: () => void;
+  onBack: () => void;
+}
+
+export function PretensaoConcretoForm({ onNext, onBack }: Props) {
   const form = useForm<PretensaoConcretoData>({
-    resolver: zodResolver(pretensaoAbstratoSchema),
+    resolver: zodResolver(pretensaoConcretoSchema),
     defaultValues: {
       penaAnos: 0,
       penaMeses: 0,
@@ -34,14 +39,21 @@ export function PretensaoConcretoForm() {
     },
   });
 
+  const { atualizarDados } = useCalculoPrescricao();
+
   function onSubmit(data: PretensaoConcretoData) {
-    console.log("Dados da pretensão abstrata:", data);
+    atualizarDados(data);
+    onNext();
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div>
+    <FormWrapper
+      titulo="Pretensão Punitiva em Concreto"
+      onSubmit={form.handleSubmit(onSubmit)}
+      onBack={onBack}
+    >
+      <Form {...form}>
+        <div className="space-y-6">
           <FormLabel className="mb-2">
             Pena em Concreto
             <FieldTooltip side="right">
@@ -94,8 +106,7 @@ export function PretensaoConcretoForm() {
             />
           </div>
         </div>
-        <Button type="submit">Continuar</Button>
-      </form>
-    </Form>
+      </Form>
+    </FormWrapper>
   );
 }

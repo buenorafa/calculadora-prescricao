@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import {
   Select,
   SelectTrigger,
@@ -8,9 +9,6 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -19,10 +17,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import { Input } from "@/components/ui/input";
 import { FieldTooltip } from "@/components/field-tooltip";
+import { FormWrapper } from "./form-wrapper";
+import { useCalculoPrescricao } from "../../context/calculo-prescricao-context";
 
-// Esquema de validação com Zod
 const formSchema = z.object({
   nomeAcusado: z.string().min(1, "O nome do acusado é obrigatório"),
   numeroProcesso: z.string().min(1, "O número do processo é obrigatório"),
@@ -32,26 +31,34 @@ const formSchema = z.object({
   }),
 });
 
-// Tipagem baseada no schema
 type FormData = z.infer<typeof formSchema>;
 
-export function DadosGeraisForm() {
+interface Props {
+  onNext?: () => void;
+  onBack?: () => void;
+}
+
+export function DadosGeraisForm({ onNext }: Props) {
+  const { atualizarDados } = useCalculoPrescricao();
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nomeAcusado: "",
       numeroProcesso: "",
       dataNascimento: "",
+      tipoPrescricao: "em-abstrato",
     },
   });
 
   function onSubmit(data: FormData) {
-    console.log("Dados enviados:", data);
+    atualizarDados(data);
+    onNext();
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <FormWrapper onSubmit={form.handleSubmit(onSubmit)} titulo="Dados Gerais">
         <FormField
           control={form.control}
           name="nomeAcusado"
@@ -65,6 +72,7 @@ export function DadosGeraisForm() {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="numeroProcesso"
@@ -78,6 +86,7 @@ export function DadosGeraisForm() {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="dataNascimento"
@@ -88,7 +97,7 @@ export function DadosGeraisForm() {
                 <FieldTooltip side="right">
                   <p>
                     Informe a data de nascimento do autor da infração. <br />A
-                    idade influencia diretamento no prazo prescricional, nos
+                    idade influencia diretamente no prazo prescricional, nos
                     termos do artigo 115 do CP.
                   </p>
                 </FieldTooltip>
@@ -134,9 +143,7 @@ export function DadosGeraisForm() {
             </FormItem>
           )}
         />
-
-        <Button type="submit">Continuar</Button>
-      </form>
+      </FormWrapper>
     </Form>
   );
 }
