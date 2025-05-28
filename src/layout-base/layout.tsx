@@ -9,9 +9,9 @@ export function Layout() {
         <aside className="flex h-full flex-col w-1/3 p-4 gap-62 bg-[#ADB6A7]">
           <div className="flex justify-between items-center">
               <Link to="/"><img src="/CP.svg" alt="Logo Calculadora de prescrição" /></Link>
-            <a href="#" className="h-10 flex font-semibold text-white w-2/6 bg-[#2B2823] items-center justify-center rounded-md hover:bg-[#685c49]">
+            <Link to ="#" className="h-10 flex font-semibold text-white w-2/6 bg-[#2B2823] items-center justify-center rounded-md hover:bg-[#685c49]">
                 Criar conta
-            </a>
+            </Link>
           </div>
           <div className="h-2/5 w-4/6 flex flex-col text-center self-center text-2xl gap-24">
             <Link to="/calculadora"
@@ -27,7 +27,7 @@ export function Layout() {
             </a>
           </div>
         </aside>
-        <div className="flex w-full">
+        <div className="flex h-full w-full">
             <Outlet />
         </div>
       </main>
