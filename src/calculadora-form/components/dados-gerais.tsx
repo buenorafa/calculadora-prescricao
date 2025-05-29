@@ -34,7 +34,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 interface Props {
-  onNext?: () => void;
+  onNext: () => void;
   onBack?: () => void;
 }
 
