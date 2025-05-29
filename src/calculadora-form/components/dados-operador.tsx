@@ -25,9 +25,10 @@ type FormData = z.infer<typeof formSchema>;
 
 interface Props {
   onNext: () => void;
+  onBack: () => void;
 }
 
-export function DadosOperador({ onNext }: Props) {
+export function DadosOperadorForm({ onNext }: Props) {
   const { atualizarDados } = useCalculoPrescricao();
 
   const form = useForm<FormData>({
