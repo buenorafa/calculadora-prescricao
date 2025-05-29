@@ -11,13 +11,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { FieldTooltip } from "@/components/field-tooltip";
+
 import { FormWrapper } from "./form-wrapper";
 import { useCalculoPrescricao } from "../../context/calculo-prescricao-context";
 
 const formSchema = z.object({
   observacao: z.string().min(1, "A observação é obrigatória"),
-  dataCalculo: z.string().min(1, "A data do cálculo é obrigatória"),
+  // dataCalculo: z.string().min(1, "A data do cálculo é obrigatória"),
   elaboradoPor: z.string().min(1, "O nome do elaborador é obrigatório"),
 });
 
@@ -35,7 +35,7 @@ export function DadosOperadorForm({ onNext }: Props) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       observacao: "",
-      dataCalculo: "",
+      // dataCalculo: "",
       elaboradoPor: "",
     },
   });
@@ -65,7 +65,7 @@ export function DadosOperadorForm({ onNext }: Props) {
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="dataCalculo"
           render={({ field }) => (
@@ -82,7 +82,7 @@ export function DadosOperadorForm({ onNext }: Props) {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
         <FormField
           control={form.control}

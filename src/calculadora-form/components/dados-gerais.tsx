@@ -26,9 +26,12 @@ const formSchema = z.object({
   nomeAcusado: z.string().min(1, "O nome do acusado é obrigatório"),
   numeroProcesso: z.string().min(1, "O número do processo é obrigatório"),
   dataNascimento: z.string().min(1, "A data de nascimento é obrigatória"),
-  tipoPrescricao: z.enum(["em-abstrato", "em-concreto"], {
+  tipoPrescricao: z.enum(["ABSTRATA", "CONCRETO"], {
     required_error: "Selecione a espécie de prescrição",
   }),
+  penaAnos: z.coerce.number().min(0, "Campo obrigatório"),
+  penaMeses: z.coerce.number().min(0, "Campo obrigatório"),
+  penaDias: z.coerce.number().min(0, "Campo obrigatório"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -47,7 +50,10 @@ export function DadosGeraisForm({ onNext }: Props) {
       nomeAcusado: "",
       numeroProcesso: "",
       dataNascimento: "",
-      tipoPrescricao: "em-abstrato",
+      tipoPrescricao: "ABSTRATA",
+      penaAnos: 0,
+      penaMeses: 0,
+      penaDias: 0,
     },
   });
 
@@ -134,8 +140,8 @@ export function DadosGeraisForm({ onNext }: Props) {
                     <SelectValue placeholder="Selecione uma opção" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="em-abstrato">Em Abstrato</SelectItem>
-                    <SelectItem value="em-concreto">Em Concreto</SelectItem>
+                    <SelectItem value="ABSTRATA">Em Abstrato</SelectItem>
+                    <SelectItem value="CONCRETO">Em Concreto</SelectItem>
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -143,6 +149,57 @@ export function DadosGeraisForm({ onNext }: Props) {
             </FormItem>
           )}
         />
+        <FormLabel className="mb-2">
+          Pena em Concreto
+          <FieldTooltip side="right">
+            <p>
+              No caso de concurso de crimes, a extinção da punibilidade incidirá
+              sobre a pena de cada um, isoladamente, nos termos do artigo 119 do
+              CP e Súmula 497 do STF.
+            </p>
+          </FieldTooltip>
+        </FormLabel>
+        <div className="max-w-1/2 grid grid-cols-3 gap-4 mt-2">
+          <FormField
+            control={form.control}
+            name="penaAnos"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Anos</FormLabel>
+                <FormControl>
+                  <Input type="number" min={0} placeholder="0" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="penaMeses"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Meses</FormLabel>
+                <FormControl>
+                  <Input type="number" min={0} placeholder="0" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="penaDias"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Dias</FormLabel>
+                <FormControl>
+                  <Input type="number" min={0} placeholder="0" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
       </FormWrapper>
     </Form>
   );
