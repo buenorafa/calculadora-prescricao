@@ -3,6 +3,7 @@ import { Layout } from "./layout-base/layout";
 import CalculadoraForm from "./calculadora-form";
 import { Home } from "./home-page/home";
 import { CalculoPrescricaoProvider } from "./context/calculo-prescricao-context";
+import { Result } from "./result-view/result";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
               </CalculoPrescricaoProvider>
             }
           />
+          <Route path="/result" element={<Result />} />
           {/* Adicione outras rotas aqui */}
         </Route>
       </Routes>
