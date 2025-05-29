@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type { CalculoPrescricao } from "@/types/calculo-prescricao";
+import type { ResultadoCalculo } from "@/types/resultado-calculo";
 
 interface CalculoPrescricaoContextType {
   dados: Partial<CalculoPrescricao>;
@@ -17,6 +18,7 @@ export function CalculoPrescricaoProvider({
   children: ReactNode;
 }) {
   const [dados, setDados] = useState<Partial<CalculoPrescricao>>({});
+  const [resultado, setResultado] = useState<ResultadoCalculo | null>(null);
 
   const atualizarDados = (novosDados: Partial<CalculoPrescricao>) => {
     setDados((prev) => ({ ...prev, ...novosDados }));
@@ -28,7 +30,7 @@ export function CalculoPrescricaoProvider({
 
   return (
     <CalculoPrescricaoContext.Provider
-      value={{ dados, atualizarDados, limparDados }}
+      value={{ dados, atualizarDados, limparDados, resultado, setResultado }}
     >
       {children}
     </CalculoPrescricaoContext.Provider>

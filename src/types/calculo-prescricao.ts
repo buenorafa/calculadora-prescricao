@@ -1,22 +1,3 @@
-export type AumentoDePena =
-  | "nao"
-  | "1/6"
-  | "1/5"
-  | "1/4"
-  | "1/3"
-  | "1/2"
-  | "2/3"
-  | "2x";
-
-export type DiminuicaoDePena =
-  | "nao"
-  | "1/6"
-  | "1/5"
-  | "1/4"
-  | "1/3"
-  | "1/2"
-  | "2/3";
-
 export type TipoSuspensao =
   | "Acusado beneficiado com a suspensão condicional do processo, nos termos do artigo 89, § 6°, da Lei n° 9.099/95."
   | "Acusado citado por edital que não comparece e não constitui advogado (vide artigo 366 do CPP e Súmula 415 do STJ)."
@@ -37,31 +18,39 @@ export interface OutraData {
 }
 
 export interface CalculoPrescricao {
-  // Dados Gerais
+  // Dados gerais
   nomeAcusado: string;
   numeroProcesso: string;
   dataNascimento: string;
-  tipoPrescricao: "em-abstrato" | "em-concreto";
-  // Pretensão Abstrata e Concreta
+  tipoPrescricao: "ABSTRATA" | "CONCRETO";
   penaAnos: number;
   penaMeses: number;
   penaDias: number;
-  // Pretensão Abstrata
-  aumento: AumentoDePena;
-  diminuicao: DiminuicaoDePena;
-  tentativa: "sim" | "nao";
-  // Datas e Suspensões
+
+  // Datas do processo
   dataFato: string;
-  dataRecebimento: string;
+  dataTransitoEmJulgado: string;
+  dataRecebimentoDaDenuncia: string;
+  dataPronuncia: string;
+  dataConfirmatoriaDaPronuncia: string;
+  dataPublicacaoDaSentencaOuAcordao: string;
+  dataInicioDoCumprimentoDaPena: string;
+  dataContinuacaoDoCumprimentoDaPena: string;
+  dataReicidencia: string;
+
+  // Flags e enums
+  crimeTentado: "true" | "false";
+  causasAumento: "true" | "false";
+  causasReducao: "true" | "false";
+  processoSuspenso: "true" | "false";
+
+  tribunalJuri: "true" | "false";
+
+  // Suspensões e datas adicionais
   suspensoes: Suspensao[];
-  tribunalJuri: "sim" | "nao";
-  dataSentenca?: string;
-  dataAcordaoPronuncia?: string;
-  dataSentencaCondenatoria: string;
-  dataAcordaoCondenatorio: string;
-  outrasDatas: OutraData[];
-  // dados operador
+
+  // Metadados
   observacao: string;
-  dataCalculo: string;
+  // dataCalculo: string;
   elaboradoPor: string;
 }

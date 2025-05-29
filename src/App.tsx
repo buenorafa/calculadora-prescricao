@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { Layout } from "./layout-base/layout";
 import CalculadoraForm from "./calculadora-form";
 import { Home } from "./home-page/home";
@@ -11,15 +11,20 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
+
+          {/* Envolve as rotas de calculadora e resultado com o Provider */}
           <Route
-            path="/calculadora"
             element={
               <CalculoPrescricaoProvider>
-                <CalculadoraForm />
+                {/* Outlet será usado automaticamente nas rotas filhas */}
+                <Outlet />
               </CalculoPrescricaoProvider>
             }
-          />
-          <Route path="/result" element={<Result />} />
+          >
+            <Route path="calculadora" element={<CalculadoraForm />} />
+            <Route path="result" element={<Result />} />
+          </Route>
+
           {/* Adicione outras rotas aqui */}
         </Route>
       </Routes>

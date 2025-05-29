@@ -1,14 +1,16 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ Importar useNavigate
 import { DadosGeraisForm } from "./components/dados-gerais";
-import { PretensaoAbstratoForm } from "./components/pretensao-abstrato";
-import { PretensaoConcretoForm } from "./components/pretensao-concreto";
-import { DatasESuspensoesForm } from "./components/datas-e-suspensoes";
 import { useCalculoPrescricao } from "../context/calculo-prescricao-context";
 import { DadosOperadorForm } from "./components/dados-operador";
+import { postCalculoPrescricao } from "@/service/api";
+import { DatasProcessoForm } from "./components/datas-processo";
+import { CausasInterrupcaoForm } from "./components/causas-interrupcao";
 
 export default function CalculoPrescricaoIndex() {
   const [step, setStep] = useState(0);
-  const { dados } = useCalculoPrescricao();
+  const { dados, setResultado } = useCalculoPrescricao(); // ✅ Importar setResultado do contexto
+  const navigate = useNavigate(); // ✅ Inicializar hook de navegação
 
   const goToNextStep = () => setStep((prev) => prev + 1);
   const goToPreviousStep = () => setStep((prev) => prev - 1);
@@ -17,30 +19,28 @@ export default function CalculoPrescricaoIndex() {
     <div className="max-w-3xl mx-auto">
       {step === 0 && <DadosGeraisForm onNext={goToNextStep} />}
 
-      {step === 1 && dados.tipoPrescricao === "em-abstrato" && (
-        <PretensaoAbstratoForm
-          onNext={goToNextStep}
-          onBack={goToPreviousStep}
-        />
-      )}
-
-      {step === 1 && dados.tipoPrescricao === "em-concreto" && (
-        <PretensaoConcretoForm
-          onNext={goToNextStep}
-          onBack={goToPreviousStep}
-        />
+      {step === 1 && (
+        <DatasProcessoForm onNext={goToNextStep} onBack={goToPreviousStep} />
       )}
 
       {step === 2 && (
-        <DatasESuspensoesForm onBack={goToPreviousStep} onNext={goToNextStep} />
+        <CausasInterrupcaoForm
+          onBack={goToPreviousStep}
+          onNext={goToNextStep}
+        />
       )}
 
       {step === 3 && (
         <DadosOperadorForm
           onBack={goToPreviousStep}
-          onNext={() => {
-            // Aqui você pode substituir pelo envio final
-            console.log(dados);
+          onNext={async () => {
+            try {
+              const response = await postCalculoPrescricao(dados);
+              setResultado(response); // ✅ Armazena o resultado no contexto
+              navigate("/result"); // ✅ Navega para a página de resultado
+            } catch (error) {
+              console.error("❌ Erro ao gerar payload:", error);
+            }
           }}
         />
       )}

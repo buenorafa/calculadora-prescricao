@@ -1,6 +1,17 @@
 import { Link } from "react-router-dom";
+import { useCalculoPrescricao } from "@/context/calculo-prescricao-context";
 
 export function Result() {
+  const { resultado } = useCalculoPrescricao();
+
+  if (!resultado) {
+    return (
+      <div className="flex justify-center items-center h-screen text-xl">
+        Nenhum resultado disponível. Retorne e refaça o cálculo.
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full w-full flex-col items-center justify-center overflow-hidden relative">
       <div className="absolute flex text-[#2B2823] gap-5 flex-col text-xl mb-20 font-semibold z-50 bg-white/80 p-8 rounded-md ">
@@ -8,11 +19,10 @@ export function Result() {
           RESULTADO DO CÁLCULO DE PRESCRIÇÃO
         </p>
         <div className="flex flex-col gap-8">
-          <label>Pena: 2 anos, 0 meses e 0 dias</label>
-
-          <label>Faixa etária: Entre 21 e 70 anos</label>
-          <label>Prazo prescrição: 4 anos</label>
-          <label>Data provável: 19/03/2007</label>
+          <label>Pena: {resultado.pena}</label>
+          <label>Faixa etária: {resultado.faixaEtaria}</label>
+          <label>Prazo prescrição: {resultado.prazoPrescricional}</label>
+          <label>Data provável: {resultado.dataProvavel}</label>
         </div>
         <div className="flex flex-row gap-8 justify-end mt-10 font-light ">
           <Link
