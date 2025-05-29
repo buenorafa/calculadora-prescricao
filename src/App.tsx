@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "./layout-base/layout";
 import CalculadoraForm from "./calculadora-form";
-import {Home} from "./home-page/home";
+import { Home } from "./home-page/home";
+import { CalculoPrescricaoProvider } from "./context/calculo-prescricao-context";
 import { Result } from "./result-view/result";
 
 function App() {
@@ -10,7 +11,14 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="/calculadora" element={<CalculadoraForm />} />
+          <Route
+            path="/calculadora"
+            element={
+              <CalculoPrescricaoProvider>
+                <CalculadoraForm />
+              </CalculoPrescricaoProvider>
+            }
+          />
           <Route path="/result" element={<Result />} />
           {/* Adicione outras rotas aqui */}
         </Route>
