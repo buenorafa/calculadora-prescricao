@@ -4,6 +4,7 @@ import CalculadoraForm from "./calculadora-form";
 import { Home } from "./home-page/home";
 import { CalculoPrescricaoProvider } from "./context/calculo-prescricao-context";
 import { Result } from "./result-view/result";
+import ListagemPage from "./listagem";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           </Route>
 
           {/* Adicione outras rotas aqui */}
+          <Route path="listagem" element={<ListagemPage></ListagemPage>} />
         </Route>
       </Routes>
     </BrowserRouter>
