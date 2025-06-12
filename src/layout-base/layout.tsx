@@ -14,7 +14,7 @@ export function Layout() {
             </Link>
           </div>
           <div className="h-2/5 w-4/6 flex flex-col text-center self-center text-2xl gap-24">
-            <Link to="/calculadora"
+            <Link to="/type-selector"
               className="h-full font-semibold flex text-[#2B2823] bg-[#9AA394] justify-center items-center rounded-md hover:bg-[#2B2823] hover:text-white"
             >
               Calcular Prescrição

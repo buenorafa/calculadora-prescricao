@@ -4,6 +4,7 @@ import CalculadoraForm from "./calculadora-form";
 import { Home } from "./home-page/home";
 import { CalculoPrescricaoProvider } from "./context/calculo-prescricao-context";
 import { Result } from "./result-view/result";
+import { TypeSelector } from "./prescription-selection/prescription-selector";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           >
             <Route path="calculadora" element={<CalculadoraForm />} />
             <Route path="result" element={<Result />} />
+            <Route path="type-selector" element={<TypeSelector />} />
           </Route>
 
           {/* Adicione outras rotas aqui */}
