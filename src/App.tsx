@@ -11,7 +11,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
+          <Route index element={<TypeSelector />} />
 
           {/* Envolve as rotas de calculadora e resultado com o Provider */}
           <Route
