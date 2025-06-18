@@ -17,7 +17,7 @@ export default function CalculoPrescricaoIndex() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      {step === 0 && <DadosGeraisForm onNext={goToNextStep} />}
+      {step === 0 && <DadosGeraisForm onNext={goToNextStep} tipoPrescricaoSelecionada={"ABSTRATA"} />}
 
       {step === 1 && (
         <DatasProcessoForm onNext={goToNextStep} onBack={goToPreviousStep} />
