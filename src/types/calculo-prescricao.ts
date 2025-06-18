@@ -22,7 +22,7 @@ export interface CalculoPrescricao {
   nomeAcusado: string;
   numeroProcesso: string;
   dataNascimento: string;
-  tipoPrescricao: "ABSTRATA" | "CONCRETO";
+  tipoPrescricao: "ABSTRATA" | "CONCRETO" | "RETROATIVA" | "INTERCORRENTE";
   penaAnos: number;
   penaMeses: number;
   penaDias: number;

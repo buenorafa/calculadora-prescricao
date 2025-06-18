@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useLocation } from "react-router-dom";
 
 import {
   Select,
@@ -26,7 +27,7 @@ const formSchema = z.object({
   nomeAcusado: z.string().min(1, "O nome do acusado é obrigatório"),
   numeroProcesso: z.string().min(1, "O número do processo é obrigatório"),
   dataNascimento: z.string().min(1, "A data de nascimento é obrigatória"),
-  tipoPrescricao: z.enum(["ABSTRATA", "CONCRETO"], {
+  tipoPrescricao: z.enum(["ABSTRATA", "CONCRETO", "RETROATIVA", "INTERCORRENTE"], {
     required_error: "Selecione a espécie de prescrição",
   }),
   penaAnos: z.coerce.number().min(0, "Campo obrigatório"),
@@ -39,10 +40,14 @@ type FormData = z.infer<typeof formSchema>;
 interface Props {
   onNext: () => void;
   onBack?: () => void;
+  tipoPrescricaoSelecionada: "ABSTRATA" | "CONCRETO" | "RETROATIVA" | "INTERCORRENTE";
 }
 
-export function DadosGeraisForm({ onNext }: Props) {
+export function DadosGeraisForm({ onNext}: Props) {
   const { atualizarDados } = useCalculoPrescricao();
+  const location = useLocation();
+  const tipoPrescricaoSelecionada =
+    location.state?.tipoPrescricaoSelecionada ?? "ABSTRATA";
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -50,7 +55,7 @@ export function DadosGeraisForm({ onNext }: Props) {
       nomeAcusado: "",
       numeroProcesso: "",
       dataNascimento: "",
-      tipoPrescricao: "ABSTRATA",
+      tipoPrescricao: tipoPrescricaoSelecionada,
       penaAnos: 0,
       penaMeses: 0,
       penaDias: 0,
@@ -124,10 +129,13 @@ export function DadosGeraisForm({ onNext }: Props) {
               <FormLabel className="flex items-center gap-2">
                 Espécie de Prescrição da Pretensão Punitiva
                 <FieldTooltip side="right">
-                  <p>
+                  {/* <p>
                     Informe Prescrição da Pretensão Punitiva em Concreto somente
                     se houver sentença com trânsito em julgado para a acusação
                     ou improvido seu recurso.
+                  </p> */}
+                   <p>
+                  Para alterar a espécie de Prescrição da Pretensão Punitiva, volte para a tela de seleção e escolha outro tipo.
                   </p>
                 </FieldTooltip>
               </FormLabel>
@@ -135,13 +143,16 @@ export function DadosGeraisForm({ onNext }: Props) {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  disabled
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma opção" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ABSTRATA">Em Abstrato</SelectItem>
-                    <SelectItem value="CONCRETO">Em Concreto</SelectItem>
+                    <SelectItem value="ABSTRATA">Em abstrato</SelectItem>
+                    <SelectItem value="CONCRETO">Executória</SelectItem>
+                    <SelectItem value="RETROATIVA">Retroativa</SelectItem>
+                    <SelectItem value="INTERCORRENTE">Intercorrente</SelectItem>
                   </SelectContent>
                 </Select>
               </FormControl>
