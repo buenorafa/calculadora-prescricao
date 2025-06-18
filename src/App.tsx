@@ -5,6 +5,8 @@ import { Home } from "./home-page/home";
 import { CalculoPrescricaoProvider } from "./context/calculo-prescricao-context";
 import { Result } from "./result-view/result";
 import { TypeSelector } from "./prescription-selection/prescription-selector";
+import ListagemPage from "./listagem";
+
 
 function App() {
   return (
@@ -28,6 +30,7 @@ function App() {
           </Route>
 
           {/* Adicione outras rotas aqui */}
+          <Route path="listagem" element={<ListagemPage></ListagemPage>} />
         </Route>
       </Routes>
     </BrowserRouter>

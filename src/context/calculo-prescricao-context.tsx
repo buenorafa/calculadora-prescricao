@@ -6,6 +6,8 @@ interface CalculoPrescricaoContextType {
   dados: Partial<CalculoPrescricao>;
   atualizarDados: (novosDados: Partial<CalculoPrescricao>) => void;
   limparDados: () => void;
+  resultado: ResultadoCalculo | null;
+  setResultado: (resultado: ResultadoCalculo | null) => void;
 }
 
 const CalculoPrescricaoContext = createContext<
