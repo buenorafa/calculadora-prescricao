@@ -31,12 +31,12 @@ export function Result() {
           >
             Novo cálculo
           </Link>
-          <Link
+          {/* <Link
             to="#"
             className="h-10 flex self-end text-black w-2/6 bg-[#ADB6A7] items-center justify-center rounded-md hover:bg-[#9AA394]"
           >
             Salvar Resultado
-          </Link>
+          </Link> */}
         </div>
       </div>
       <img
