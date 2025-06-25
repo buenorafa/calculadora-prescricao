@@ -20,15 +20,16 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { DataTableFilters } from "./data-table-filters";
+// import { UserDetailsDialog } from "./user-details-dialog";
+import type { Consulta } from "./columns";
 import { UserDetailsDialog } from "./user-details-dialog";
-import type { Associado } from "./columns";
 
-interface DataTableProps<TData extends Associado, TValue> {
+interface DataTableProps<TData extends Consulta, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function DataTable<TData extends Associado, TValue>({
+export function DataTable<TData extends Consulta, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
@@ -48,7 +49,7 @@ export function DataTable<TData extends Associado, TValue>({
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [selectedUser, setSelectedUser] = useState<Associado | null>(null);
+  const [selectedPrescription, setSelectedPrescription] = useState<Consulta | null>(null);
 
   const table = useReactTable({
     data,
@@ -101,7 +102,7 @@ export function DataTable<TData extends Associado, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  onClick={() => setSelectedUser(row.original)}
+                  onClick={() => setSelectedPrescription(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -150,8 +151,8 @@ export function DataTable<TData extends Associado, TValue>({
       </div>
 
       <UserDetailsDialog
-        selectedUser={selectedUser}
-        setSelectedUser={setSelectedUser}
+        selectedPrescription={selectedPrescription}
+        setSelectedPrescription={setSelectedPrescription}
       />
     </div>
   );
