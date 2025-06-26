@@ -42,7 +42,6 @@ export default function CalculoPrescricaoIndex() {
   return (
     <div className="max-w-3xl mx-auto">
       {step === 0 && <DadosGeraisForm onNext={goToNextStep} />}
-      {/* {step === 0 && <FormExecutoria onNext={goToNextStep} />} */}
 
       {step === 1 &&
         isTipoValido &&
