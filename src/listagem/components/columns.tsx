@@ -1,49 +1,36 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
+import type { PrescricaoRequestDTO } from "../../types/prescricao";
 
-export type Associado = {
-  nome: string;
-  email: string;
-  telefone: string;
-  cpf: string;
-  dataNascimento: string;
-  perfil: "associado" | "acolhimento" | "farmácia" | "diretoria" | "médico";
-  tipo: "paciente" | "responsável" | "apoiador" | "pet";
-  status:
-    | "ativo"
-    | "documentação pendente"
-    | "receita vencida"
-    | "mensalidade pendente"
-    | "inativo";
+export type Consulta = PrescricaoRequestDTO & {
+  
+
 };
 
-export const columns: ColumnDef<Associado>[] = [
+export const columns: ColumnDef<Consulta>[] = [
+    {
+    accessorKey: "dataConsulta",
+    header: "Data da Consulta",
+  },
   {
-    accessorKey: "nome",
+    accessorKey: "nomeAcusado",
     header: "Nome",
     enableGlobalFilter: true,
   },
   {
-    accessorKey: "email",
-    header: "Email",
+    accessorKey: "tipoPrescricao",
+    header: "Tipo de Prescrição",
     enableGlobalFilter: true,
   },
   {
-    accessorKey: "telefone",
-    header: "Telefone",
+    accessorKey: "pena",
+    header: "Pena",
     enableGlobalFilter: true,
   },
+
   {
-    accessorKey: "perfil",
-    header: "Perfil",
-  },
-  {
-    accessorKey: "tipo",
-    header: "Tipo de Associado",
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: "prazoPrescricional",
+    header: "Data da Prescrição",
   },
 ];

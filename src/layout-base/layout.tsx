@@ -11,7 +11,7 @@ export function Layout() {
               <Link to="/" className="text-start w-28"><img src="/Logotipo CPP.svg" alt="Logo Calculadora de prescrição" /></Link>
 
           <div className="w-2/6 h-2/3 flex flex-row text-center self-center text-lg justify-end gap-10"> 
-            <Link to ="#"
+            <Link to ="/listagem"
               className="flex font-semibold p-2 text-black border-black border-1 solid bg-white justify-center items-center rounded-sm hover:bg-gray-100"
             >
               Consultar Histórico
@@ -25,7 +25,7 @@ export function Layout() {
                <div className="w-full border-b-1">
 
         </div>
-        <div className="flex h-full w-full">
+        <div className="flex h-full w-full justify-center">
             <Outlet />
         </div>
  

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useCalculoPrescricao } from "../context/calculo-prescricao-context";
 
-import { postCalculoPrescricao } from "@/service/api";
+import { postCalculoPrescricao, postSalvarPrescricao } from "@/service/api";
 
 import {
   DadosGeraisForm,
@@ -13,6 +13,7 @@ import {
   FormIntercorrente,
   DadosOperadorForm,
 } from "./components/";
+import type { PrescricaoSaveDTO } from "@/types/prescricao";
 
 export default function CalculoPrescricaoIndex() {
   const [step, setStep] = useState(0);
@@ -53,6 +54,20 @@ export default function CalculoPrescricaoIndex() {
           onNext={async () => {
             try {
               const response = await postCalculoPrescricao(dados);
+              const usuarioId = 1;
+              const payloadParaSalvar = {
+                ...dados,
+                usuarioId: usuarioId,
+              };
+              // console.log("Enviando para salvar:", payloadParaSalvar);
+              console.log(
+                "🔴 PAYLOAD FINAL ENVIADO PARA /salvar:",
+                JSON.stringify(payloadParaSalvar, null, 2)
+              );
+              await postSalvarPrescricao(
+                payloadParaSalvar as PrescricaoSaveDTO
+              );
+              console.log("Prescrição salva com sucesso no banco de dados!");
               setResultado(response);
               navigate("/result");
             } catch (error) {

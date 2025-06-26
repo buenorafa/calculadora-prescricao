@@ -26,13 +26,13 @@ export function DataTableFilters({
   return (
     <div className="flex flex-wrap items-center gap-4 py-2">
       <Input
-        placeholder="Buscar por nome, email ou telefone"
+        placeholder="Buscar por nome"
         value={globalFilter}
         onChange={(e) => setGlobalFilter(e.target.value)}
         className="w-1/3"
       />
 
-      <Select
+      {/* <Select
         value={(table.getColumn("perfil")?.getFilterValue() as string) ?? ""}
         onValueChange={(value) =>
           table
@@ -51,13 +51,13 @@ export function DataTableFilters({
           <SelectItem value="diretoria">Diretoria</SelectItem>
           <SelectItem value="médico">Médico</SelectItem>
         </SelectContent>
-      </Select>
+      </Select> */}
 
       <Select
-        value={(table.getColumn("tipo")?.getFilterValue() as string) ?? ""}
+        value={(table.getColumn("tipoPrescricao")?.getFilterValue() as string) ?? ""}
         onValueChange={(value) =>
           table
-            .getColumn("tipo")
+            .getColumn("tipoPrescricao")
             ?.setFilterValue(value === "__all__" ? undefined : value)
         }
       >
@@ -66,14 +66,14 @@ export function DataTableFilters({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="__all__">Todos os Tipos</SelectItem>
-          <SelectItem value="paciente">Paciente</SelectItem>
-          <SelectItem value="responsável">Responsável</SelectItem>
-          <SelectItem value="apoiador">Apoiador</SelectItem>
-          <SelectItem value="pet">Pet</SelectItem>
+          <SelectItem value="ABSTRATA">ABSTRATA</SelectItem>
+          <SelectItem value="CONCRETA">CONCRETA</SelectItem>
+          <SelectItem value="RETROATIVA">RETROATIVA</SelectItem>
+          <SelectItem value="INTERCORRENTE">INTERCORRENTE</SelectItem>
         </SelectContent>
       </Select>
 
-      <Select
+      {/* <Select
         value={(table.getColumn("status")?.getFilterValue() as string) ?? ""}
         onValueChange={(value) =>
           table
@@ -96,7 +96,7 @@ export function DataTableFilters({
           </SelectItem>
           <SelectItem value="inativo">Inativo</SelectItem>
         </SelectContent>
-      </Select>
+      </Select> */}
 
       <Button variant="outline" onClick={clearFilters}>
         Limpar filtros
