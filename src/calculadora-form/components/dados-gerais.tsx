@@ -10,6 +10,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+
 import {
   Form,
   FormControl,
@@ -23,21 +24,34 @@ import { FieldTooltip } from "@/components/field-tooltip";
 import { FormWrapper } from "./form-wrapper";
 import { useCalculoPrescricao } from "../../context/calculo-prescricao-context";
 
-const formSchema = z.object({
-  nomeAcusado: z.string().min(1, "O nome do acusado é obrigatório"),
-  numeroProcesso: z.string().min(1, "O número do processo é obrigatório"),
-  dataNascimento: z.string().min(1, "A data de nascimento é obrigatória"),
-  tipoPrescricao: z.enum(
-    ["ABSTRATA", "CONCRETO", "RETROATIVA", "INTERCORRENTE"],
-    {
-      required_error: "Selecione a espécie de prescrição",
+const formSchema = z
+  .object({
+    nomeAcusado: z.string().min(1, "O nome do acusado é obrigatório"),
+    numeroProcesso: z.string().min(1, "O número do processo é obrigatório"),
+    dataNascimento: z.string().min(1, "A data de nascimento é obrigatória"),
+    tipoPrescricao: z.enum(
+      ["ABSTRATA", "CONCRETO", "RETROATIVA", "INTERCORRENTE"],
+      {
+        required_error: "Selecione a espécie de prescrição",
+      }
+    ),
+    penaAnos: z.coerce.number().min(0, "Campo obrigatório"),
+    penaMeses: z.coerce.number().min(0, "Campo obrigatório"),
+    penaDias: z.coerce.number().min(0, "Campo obrigatório"),
+    dataFato: z.string().min(1, "Informe a data do fato"),
+  })
+  .superRefine((data, ctx) => {
+    const nascimento = new Date(data.dataNascimento);
+    const fato = new Date(data.dataFato);
+
+    if (fato <= nascimento) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["dataFato"],
+        message: "A data do fato deve ser posterior à data de nascimento",
+      });
     }
-  ),
-  penaAnos: z.coerce.number().min(0, "Campo obrigatório"),
-  penaMeses: z.coerce.number().min(0, "Campo obrigatório"),
-  penaDias: z.coerce.number().min(0, "Campo obrigatório"),
-  dataFato: z.string().min(1, "Informe a data do fato"),
-});
+  });
 
 type FormData = z.infer<typeof formSchema>;
 
