@@ -51,6 +51,5 @@ export interface CalculoPrescricao {
 
   // Metadados
   observacao: string;
-  // dataCalculo: string;
   elaboradoPor: string;
 }

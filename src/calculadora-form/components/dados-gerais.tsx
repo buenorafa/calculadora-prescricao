@@ -27,12 +27,16 @@ const formSchema = z.object({
   nomeAcusado: z.string().min(1, "O nome do acusado é obrigatório"),
   numeroProcesso: z.string().min(1, "O número do processo é obrigatório"),
   dataNascimento: z.string().min(1, "A data de nascimento é obrigatória"),
-  tipoPrescricao: z.enum(["ABSTRATA", "CONCRETO", "RETROATIVA", "INTERCORRENTE"], {
-    required_error: "Selecione a espécie de prescrição",
-  }),
+  tipoPrescricao: z.enum(
+    ["ABSTRATA", "CONCRETO", "RETROATIVA", "INTERCORRENTE"],
+    {
+      required_error: "Selecione a espécie de prescrição",
+    }
+  ),
   penaAnos: z.coerce.number().min(0, "Campo obrigatório"),
   penaMeses: z.coerce.number().min(0, "Campo obrigatório"),
   penaDias: z.coerce.number().min(0, "Campo obrigatório"),
+  dataFato: z.string().min(1, "Informe a data do fato"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -40,10 +44,14 @@ type FormData = z.infer<typeof formSchema>;
 interface Props {
   onNext: () => void;
   onBack?: () => void;
-  tipoPrescricaoSelecionada: "ABSTRATA" | "CONCRETO" | "RETROATIVA" | "INTERCORRENTE";
+  tipoPrescricaoSelecionada:
+    | "ABSTRATA"
+    | "CONCRETO"
+    | "RETROATIVA"
+    | "INTERCORRENTE";
 }
 
-export function DadosGeraisForm({ onNext}: Props) {
+export function DadosGeraisForm({ onNext }: Props) {
   const { atualizarDados } = useCalculoPrescricao();
   const location = useLocation();
   const tipoPrescricaoSelecionada =
@@ -59,6 +67,7 @@ export function DadosGeraisForm({ onNext}: Props) {
       penaAnos: 0,
       penaMeses: 0,
       penaDias: 0,
+      dataFato: "",
     },
   });
 
@@ -134,8 +143,9 @@ export function DadosGeraisForm({ onNext}: Props) {
                     se houver sentença com trânsito em julgado para a acusação
                     ou improvido seu recurso.
                   </p> */}
-                   <p>
-                  Para alterar a espécie de Prescrição da Pretensão Punitiva, volte para a tela de seleção e escolha outro tipo.
+                  <p>
+                    Para alterar a espécie de Prescrição da Pretensão Punitiva,
+                    volte para a tela de seleção e escolha outro tipo.
                   </p>
                 </FieldTooltip>
               </FormLabel>
@@ -161,7 +171,10 @@ export function DadosGeraisForm({ onNext}: Props) {
           )}
         />
         <FormLabel className="mb-2">
-          Pena em Concreto
+          Pena{" "}
+          {tipoPrescricaoSelecionada === "ABSTRATA"
+            ? "Máxima em Abstrato"
+            : "em Concreto"}
           <FieldTooltip side="right">
             <p>
               No caso de concurso de crimes, a extinção da punibilidade incidirá
@@ -211,6 +224,25 @@ export function DadosGeraisForm({ onNext}: Props) {
             )}
           />
         </div>
+
+        <FormField
+          control={form.control}
+          name="dataFato"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Data do Fato
+                <FieldTooltip side="right">
+                  <p>Informe a data da produção do resultado (art. 111, CP).</p>
+                </FieldTooltip>
+              </FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </FormWrapper>
     </Form>
   );
