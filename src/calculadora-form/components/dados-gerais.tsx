@@ -58,11 +58,11 @@ type FormData = z.infer<typeof formSchema>;
 interface Props {
   onNext: () => void;
   onBack?: () => void;
-  tipoPrescricaoSelecionada:
-    | "ABSTRATA"
-    | "CONCRETO"
-    | "RETROATIVA"
-    | "INTERCORRENTE";
+  // tipoPrescricaoSelecionada:
+  //   | "ABSTRATA"
+  //   | "CONCRETO"
+  //   | "RETROATIVA"
+  //   | "INTERCORRENTE";
 }
 
 export function DadosGeraisForm({ onNext }: Props) {

@@ -24,7 +24,13 @@ export default function CalculoPrescricaoIndex() {
   const goToPreviousStep = () => setStep((prev) => prev - 1);
 
   const formComponentMap = {
-    ABSTRATA: <FormAbstrata onBack={goToPreviousStep} onNext={goToNextStep} />,
+    ABSTRATA: (
+      <FormAbstrata
+        onBack={goToPreviousStep}
+        onNext={goToNextStep}
+        dataFato={dados.dataFato}
+      />
+    ),
     CONCRETO: (
       <FormExecutoria onBack={goToPreviousStep} onNext={goToNextStep} />
     ),
@@ -74,6 +80,9 @@ export default function CalculoPrescricaoIndex() {
               console.error("❌ Erro ao gerar payload:", error);
             }
           }}
+          // onNext={() => {
+          //   console.log("Enviando: ", dados);
+          // }}
         />
       )}
     </div>

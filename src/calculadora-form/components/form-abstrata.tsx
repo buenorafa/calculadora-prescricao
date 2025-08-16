@@ -23,35 +23,54 @@ import {
 import { FormWrapper } from "./form-wrapper";
 import { useCalculoPrescricao } from "../../context/calculo-prescricao-context";
 
-const suspensaoSchema = z.object({
-  tipo: z.string().min(1, "Informe o tipo de suspensão"),
-  inicio: z.string().min(1, "Data obrigatória"),
-  fim: z.string().min(1, "Data obrigatória"),
-});
-
-const formSchema = z.object({
-  dataRecebimentoDaDenuncia: z.string().optional(),
-  suspensoes: z.array(suspensaoSchema),
-
-  causasAumento: z.enum(["true", "false"]),
-  causasReducao: z.enum(["true", "false"]),
-});
-
-export function FormAbstrata({
-  onNext,
-  onBack,
-}: {
+// ⬇️ Recebe dataFato como prop
+interface Props {
   onNext: () => void;
   onBack: () => void;
-}) {
+  dataFato?: string;
+}
+
+// ⬇️ Schema como função, recebendo dataFato
+function createFormSchema(dataFato?: string) {
+  return z
+    .object({
+      dataRecebimentoDaDenuncia: z.string().optional(),
+      suspensoes: z.array(
+        z.object({
+          tipo: z.string().min(1, "Informe o tipo de suspensão"),
+          inicio: z.string().min(1, "Data obrigatória"),
+          fim: z.string().min(1, "Data obrigatória"),
+        })
+      ),
+      causasAumento: z.enum(["true", "false"]),
+      causasReducao: z.enum(["true", "false"]),
+    })
+    .superRefine((val, ctx) => {
+      if (val.dataRecebimentoDaDenuncia && dataFato) {
+        const denuncia = new Date(val.dataRecebimentoDaDenuncia);
+        const fato = new Date(dataFato);
+        if (denuncia <= fato) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["dataRecebimentoDaDenuncia"],
+            message: `A data do recebimento da denúncia deve ser posterior à data do fato: ${new Intl.DateTimeFormat(
+              "pt-BR"
+            ).format(fato)}`,
+          });
+        }
+      }
+    });
+}
+
+export function FormAbstrata({ onNext, onBack, dataFato }: Props) {
   const { atualizarDados } = useCalculoPrescricao();
 
   const form = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(createFormSchema(dataFato)),
     defaultValues: {
+      dataRecebimentoDaDenuncia: "",
       causasAumento: "false",
       causasReducao: "false",
-
       suspensoes: [],
     },
   });
