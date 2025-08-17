@@ -1,12 +1,13 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { Layout } from "./layout-base/layout";
 import CalculadoraForm from "./calculadora-form";
-import { Home } from "./home-page/home";
+
 import { CalculoPrescricaoProvider } from "./context/calculo-prescricao-context";
 import { Result } from "./result-view/result";
 import { TypeSelector } from "./prescription-selection/prescription-selector";
 import ListagemPage from "./listagem";
 
+import CadastroPage from "./cadastro-form/index";
 
 function App() {
   return (
@@ -28,6 +29,8 @@ function App() {
             <Route path="result" element={<Result />} />
             <Route path="type-selector" element={<TypeSelector />} />
           </Route>
+
+          <Route path="cadastro" element={<CadastroPage />}></Route>
 
           {/* Adicione outras rotas aqui */}
           <Route path="listagem" element={<ListagemPage></ListagemPage>} />
