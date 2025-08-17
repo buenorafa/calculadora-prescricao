@@ -80,8 +80,14 @@ export default function CalculoPrescricaoIndex() {
               console.error("❌ Erro ao gerar payload:", error);
             }
           }}
+
           // onNext={() => {
-          //   console.log("Enviando: ", dados);
+          //   const usuarioId = 1;
+          //   const payloadParaSalvar = {
+          //     ...dados,
+          //     usuarioId: usuarioId,
+          //   };
+          //   console.log(JSON.stringify(payloadParaSalvar, null, 2));
           // }}
         />
       )}
