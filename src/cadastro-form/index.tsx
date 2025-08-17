@@ -3,8 +3,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/";
-import { CadastroForm } from "./components/cadastro-form";
+import { Separator } from "@/components/ui/separator";
+import {
+  CadastroForm,
+  type CadastroFormData,
+} from "./components/cadastro-form";
 
 export default function CadastroPage() {
   const navigate = useNavigate();
