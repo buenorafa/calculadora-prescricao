@@ -1,4 +1,4 @@
-import { ResultadoCalculo } from "./../types/resultado-calculo";
+// import { ResultadoCalculo } from "./../types/resultado-calculo";
 import { type Usuario } from "@/types/usuario";
 import axios from "axios";
 import type { Prescricao, PrescricaoSaveDTO } from "../types/prescricao";
@@ -56,4 +56,10 @@ export async function putUsuario(
   }
 
   return data;
+}
+
+export async function deleteUsuario(usuarioId: number) {
+  const response = await api_usuario.delete(`/${usuarioId}`);
+
+  return response.status === 204;
 }
