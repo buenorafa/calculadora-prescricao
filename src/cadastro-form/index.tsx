@@ -8,6 +8,7 @@ import {
   CadastroForm,
   type CadastroFormData,
 } from "./components/cadastro-form";
+import { ensureCsrfOnce, postUsuario } from "@/service/api";
 
 export default function CadastroPage() {
   const navigate = useNavigate();
@@ -19,20 +20,9 @@ export default function CadastroPage() {
     setError(null);
 
     try {
-      const resp = await fetch("/api/auth/cadastro", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data, null, 2),
-      });
-
-      if (!resp.ok) {
-        const body = await resp.json().catch(() => ({}));
-        throw new Error(
-          body?.message || "Não foi possível concluir o cadastro."
-        );
-      }
-
-      // Ex.: redireciona para login (ou dashboard)
+      console.log(data);
+      await ensureCsrfOnce();
+      await postUsuario(data);
       navigate("/login", { replace: true });
     } catch (e: any) {
       setError(e.message);

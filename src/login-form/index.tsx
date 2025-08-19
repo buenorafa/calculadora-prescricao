@@ -7,31 +7,34 @@ import { Separator } from "@/components/ui/separator";
 
 import { LoginForm, type LoginFormData } from "./components/login-form";
 
+import { api, ensureCsrfOnce, login, me } from "@/service/api"; // sua instância axios
+import type { Usuario } from "@/types/usuario";
+
 export default function LoginPage() {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  //   import { useUser } from "@/context/user-context";
+  //   const { setUsuarioLocal } = useUser();
+
   async function handleSubmit(data: LoginFormData) {
     setSubmitting(true);
     setError(null);
-
+    console.log("ENTROU handlesubmit");
     try {
-      const resp = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data, null, 2),
-      });
+      await login(data.email, data.senha); // cria sessão
+      //   const usuario = await me(); // hidrata usuário
+      //   setUsuarioLocal(usuario);
 
-      if (!resp.ok) {
-        const body = await resp.json().catch(() => ({}));
-        throw new Error(body?.message || "E-mail ou senha inválidos.");
-      }
-
-      // Ex.: após login bem-sucedido, vá para o dashboard
-      navigate("/dashboard", { replace: true });
-    } catch (e: any) {
-      setError(e.message);
+      navigate("/usuario", { replace: true });
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "E-mail ou senha inválidos.";
+      setError(msg);
     } finally {
       setSubmitting(false);
     }
