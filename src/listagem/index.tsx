@@ -1,57 +1,77 @@
+// src/listagem/index.tsx
 "use client";
 
+import { useEffect, useState } from "react";
+import { useUser } from "@/context/usuario-context";
 import { DataTable } from "./components/data-table";
 import { columns } from "./components/columns";
-import { getPrescricoesPorUsuario } from "@/service/api";
-// import type { CalculoPrescricao } from "@/types/calculo-prescricao";
 import type { Consulta } from "./components/columns";
-import { useEffect, useState } from "react";
-
-// import { mockData } from "./mock";
+import { getPrescricoesPorUsuario } from "@/service/api";
 
 export default function ListagemPage() {
-  // Estado para armazenar as prescrições vindas da API
+  const { usuario, carregando } = useUser();
+
   const [data, setData] = useState<Consulta[]>([]);
-  // Estado para controlar o status de carregamento
   const [isLoading, setIsLoading] = useState(true);
-  // Estado para armazenar qualquer erro que ocorra na busca
   const [error, setError] = useState<string | null>(null);
 
+  // Exemplo de mapeamento da resposta da API -> Consulta
+  // Ajuste conforme os campos reais do seu backend e das suas colunas
+  function mapToConsulta(apiItem: any): Consulta {
+    return {
+      // Exemplos de campos — substitua pelos nomes corretos:
+      id: apiItem.id,
+      processo: apiItem.processo ?? apiItem.numeroProcesso,
+      crime: apiItem.crime ?? apiItem.tituloCrime,
+      dataInicio: apiItem.dataInicio,
+      dataFim: apiItem.dataFim,
+      situacao: apiItem.situacao,
+    } as Consulta;
+  }
+
   useEffect(() => {
-    // Função assíncrona para buscar os dados
+    // espera terminar a hidratação do contexto
+    if (carregando) return;
+
+    // se não logado, mostre mensagem/retorne ou redirecione
+    if (!usuario) {
+      setIsLoading(false);
+      setError("Você precisa estar logado para ver suas prescrições.");
+      return;
+    }
+
     const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
-        // --- IMPORTANTE ---
-        // Você precisa de alguma forma obter o ID do usuário logado.
-        // Aqui estou usando '1' como exemplo.
-        // Substitua pelo ID do usuário real.
-        const usuarioId = 1; 
-        
-        const prescricoes = await getPrescricoesPorUsuario(usuarioId);
-        setData(prescricoes);
-      } catch (err) {
+        const prescricoes = await getPrescricoesPorUsuario(usuario.id);
+
+        // se a API já retornar no formato das colunas, pode pular o map
+        const lista: Consulta[] = Array.isArray(prescricoes)
+          ? prescricoes.map(mapToConsulta)
+          : [];
+
+        setData(lista);
+      } catch (err: any) {
         console.error("Erro ao buscar prescrições:", err);
-        setError("Não foi possível carregar os dados. Tente novamente mais tarde.");
+        setError(
+          err?.message || "Não foi possível carregar os dados. Tente novamente."
+        );
       } finally {
-        // Garante que o estado de 'carregando' seja desativado
-        // tanto em caso de sucesso quanto de erro.
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []); // O array vazio `[]` faz com que o useEffect execute apenas uma vez, quando o componente é montado.
+  }, [carregando, usuario]);
 
-  // Renderização condicional baseada no estado
-  if (isLoading) {
+  if (carregando || isLoading) {
     return <div>Carregando...</div>;
   }
 
   if (error) {
-    return <div>Erro: {error}</div>;
+    return <div className="text-red-600">Erro: {error}</div>;
   }
 
   return <DataTable columns={columns} data={data} />;
 }
-//   return <DataTable columns={columns} data={getPrescricoesPorUsuario()} />;
-// }
