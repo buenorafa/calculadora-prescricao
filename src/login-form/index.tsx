@@ -5,41 +5,35 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-import { LoginForm, type LoginFormData } from "./components/login-form";
+import { LoginForm } from "./components/login-form";
 
-import { api, ensureCsrfOnce, login, me } from "@/service/api"; // sua instância axios
-import type { Usuario } from "@/types/usuario";
+import { login } from "@/service/api"; // sua instância axios
+
+import { useUser } from "@/context/usuario-context";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  //   import { useUser } from "@/context/user-context";
-  //   const { setUsuarioLocal } = useUser();
-
-  async function handleSubmit(data: LoginFormData) {
-    setSubmitting(true);
-    setError(null);
-    console.log("ENTROU handlesubmit");
+  const { atualizarUsuarioLocal } = useUser();
+  async function handleSubmit(data: { email: string; senha: string }) {
     try {
-      await login(data.email, data.senha); // cria sessão
-      //   const usuario = await me(); // hidrata usuário
-      //   setUsuarioLocal(usuario);
+      const resp = await login(data.email, data.senha);
+
+      console.log("✅ Login response:", resp);
+
+      // acessa o usuário
+      const usuarioLogado = resp.usuario;
+
+      atualizarUsuarioLocal(usuarioLogado);
 
       navigate("/usuario", { replace: true });
-    } catch (err: any) {
-      const msg =
-        err?.response?.data?.message ||
-        err?.response?.data?.error ||
-        err?.message ||
-        "E-mail ou senha inválidos.";
-      setError(msg);
-    } finally {
-      setSubmitting(false);
+    } catch (err) {
+      console.error("Erro no login:", err);
+      setError("E-mail ou senha inválidos.");
     }
   }
-
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10">
       <Card className="w-full max-w-lg p-8 space-y-6">

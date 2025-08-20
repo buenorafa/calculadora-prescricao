@@ -16,6 +16,13 @@ export const api = axios.create({
   xsrfHeaderName: "X-XSRF-TOKEN",
 });
 
+export const api_prescricao = axios.create({
+  baseURL: "/prescricao", // relativa → proxy do Vite
+  withCredentials: true, // manda JSESSIONID
+  xsrfCookieName: "XSRF-TOKEN",
+  xsrfHeaderName: "X-XSRF-TOKEN",
+});
+
 // ---- Interceptores (logs e mensagens) ----
 api.interceptors.response.use(
   (resp) => resp,
@@ -57,11 +64,32 @@ if (import.meta?.env?.MODE !== "production") {
     }
   );
 }
+function getCookie(name: string) {
+  const m = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
+api.interceptors.request.use((config) => {
+  config.headers = config.headers ?? {};
+  // sempre mande JSON no POST
+  if (
+    config.method &&
+    ["post", "put", "patch", "delete"].includes(config.method)
+  ) {
+    (config.headers as any)["Content-Type"] = "application/json";
+  }
+  // injeta o XSRF do cookie
+  const token = getCookie("XSRF-TOKEN");
+  if (token) {
+    (config.headers as any)["X-XSRF-TOKEN"] = token;
+  }
+  return config;
+});
 
 // ---- CSRF: garanta o cookie XSRF-TOKEN uma vez antes de POST/PUT/PATCH/DELETE ----
 let csrfEnsured = false;
 export async function ensureCsrfOnce() {
-  if (csrfEnsured) return;
+  if (document.cookie.includes("XSRF-TOKEN=")) return;
   await api.get("/public/ping"); // emite o cookie XSRF-TOKEN
   csrfEnsured = true;
 }
@@ -76,22 +104,32 @@ async function mutate<T>(fn: () => Promise<{ data: T }>): Promise<T> {
 //                                    PRESCRIÇÃO
 // =====================================================================================
 
-export async function postCalculoPrescricao(payload: unknown) {
-  return mutate(() =>
-    api.post("/prescricao/calcular", payload, {
+// export async function postCalculoPrescricao(payload: unknown) {
+//   return mutate(() =>
+
+//     api.post("/prescricao/calcular", payload, {
+//       headers: { "Content-Type": "application/json" },
+//     })
+//   );
+// }
+export async function postCalculoPrescricao(payload: any) {
+  await ensureCsrfOnce();
+
+  return api
+    .post("/prescricao/calcular", payload, {
       headers: { "Content-Type": "application/json" },
     })
-  );
+    .then((r) => r.data);
 }
 
-export async function postSalvarPrescricao(
-  dados: PrescricaoSaveDTO
-): Promise<Prescricao> {
-  return mutate(() =>
-    api.post<Prescricao>("/prescricao/salvar", dados, {
+export async function postSalvarPrescricao(dados: any) {
+  await ensureCsrfOnce();
+
+  return api
+    .post("/prescricao/salvar", dados, {
       headers: { "Content-Type": "application/json" },
     })
-  );
+    .then((r) => r.data);
 }
 
 export async function getPrescricoesPorUsuario(
@@ -140,10 +178,18 @@ export async function deleteUsuario(usuarioId: number): Promise<boolean> {
 //                                      AUTH
 // =====================================================================================
 
-export async function login(username: string, password: string): Promise<void> {
+type LoginResponse = {
+  status: string; // "OK"
+  usuario: Usuario; // { id, nome, email }
+};
+
+export async function login(
+  username: string,
+  password: string
+): Promise<LoginResponse> {
   await ensureCsrfOnce(); // garante XSRF-TOKEN no header
 
-  await api.post(
+  const response = await api.post(
     "/api/auth/login",
     { username, password },
     {
@@ -152,6 +198,7 @@ export async function login(username: string, password: string): Promise<void> {
       },
     }
   );
+  return response.data;
 }
 
 export async function logout(): Promise<void> {
