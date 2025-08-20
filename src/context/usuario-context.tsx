@@ -1,79 +1,59 @@
+// src/context/user-context.tsx
 "use client";
 
 import {
   createContext,
   useContext,
+  useEffect, // ✅ importe o hook correto
+  useRef,
   useState,
-  useEffect,
   type ReactNode,
 } from "react";
-
 import type { Usuario } from "@/types/usuario";
 
-interface UserContextType {
+type UserContextType = {
   usuario: Usuario | null;
-  login: (email: string, senha: string) => Promise<void>;
-  cadastro: (usuario: Omit<Usuario, "id">) => Promise<void>;
-  logout: () => void;
   carregando: boolean;
-}
+  erro?: string | null;
+  atualizarUsuarioLocal: (u: Usuario | null) => void;
+};
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
 
-  // Recupera usuário salvo no localStorage
+  const bootstrappedRef = useRef(false);
+
+  // ✅ Hidrata do localStorage e encerra o carregamento
   useEffect(() => {
-    const storedUser = localStorage.getItem("usuario");
-    if (storedUser) {
-      setUsuario(JSON.parse(storedUser));
+    if (bootstrappedRef.current) return;
+    bootstrappedRef.current = true;
+
+    try {
+      const raw = localStorage.getItem("usuario");
+      if (raw) {
+        const u: Usuario = JSON.parse(raw);
+        setUsuario(u);
+      }
+    } catch (e) {
+      setErro("Falha ao ler usuário salvo");
+    } finally {
+      setCarregando(false); // MUITO IMPORTANTE
     }
-    setCarregando(false);
   }, []);
 
-  async function login(email: string, senha: string) {
-    // Chamada ao backend (ajuste a URL para sua API Spring Boot)
-    const resp = await fetch("http://localhost:8080/api/usuarios/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, senha }),
-    });
-
-    if (!resp.ok) {
-      throw new Error("Credenciais inválidas");
-    }
-
-    const data: Usuario = await resp.json();
-    setUsuario(data);
-    localStorage.setItem("usuario", JSON.stringify(data));
-  }
-
-  async function cadastro(novoUsuario: Omit<Usuario, "id">) {
-    const resp = await fetch("http://localhost:8080/api/usuarios", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(novoUsuario),
-    });
-
-    if (!resp.ok) {
-      throw new Error("Erro ao cadastrar usuário");
-    }
-
-    const data: Usuario = await resp.json();
-    setUsuario(data);
-    localStorage.setItem("usuario", JSON.stringify(data));
-  }
-
-  function logout() {
-    setUsuario(null);
-    localStorage.removeItem("usuario");
+  function atualizarUsuarioLocal(u: Usuario | null) {
+    setUsuario(u);
+    if (u) localStorage.setItem("usuario", JSON.stringify(u));
+    else localStorage.removeItem("usuario");
   }
 
   return (
     <UserContext.Provider
-      value={{ usuario, login, cadastro, logout, carregando }}
+      value={{ usuario, carregando, erro, atualizarUsuarioLocal }}
     >
       {children}
     </UserContext.Provider>
@@ -81,9 +61,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
 }
 
 export function useUser() {
-  const context = useContext(UserContext);
-  if (!context) {
+  const ctx = useContext(UserContext);
+  if (!ctx) {
     throw new Error("useUser deve ser usado dentro de um UserProvider");
   }
-  return context;
+  return ctx;
 }
+
+// ❌ Removido: NÃO declare sua própria função useEffect aqui
