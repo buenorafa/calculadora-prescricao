@@ -15,6 +15,8 @@ import {
 } from "./components/";
 import type { PrescricaoSaveDTO } from "@/types/prescricao";
 
+import { useUser } from "@/context/usuario-context";
+
 export default function CalculoPrescricaoIndex() {
   const [step, setStep] = useState(0);
   const { dados, setResultado } = useCalculoPrescricao();
@@ -46,6 +48,8 @@ export default function CalculoPrescricaoIndex() {
   const tipo = dados.tipoPrescricao?.toUpperCase();
   const isTipoValido = tipo && tipo in formComponentMap;
 
+  const { usuario } = useUser();
+
   return (
     <div className="max-w-3xl mx-auto">
       {step === 0 && <DadosGeraisForm onNext={goToNextStep} />}
@@ -53,36 +57,61 @@ export default function CalculoPrescricaoIndex() {
       {step === 1 &&
         isTipoValido &&
         formComponentMap[tipo as keyof typeof formComponentMap]}
-
       {step === 2 && (
         <DadosOperadorForm
           onBack={goToPreviousStep}
           onNext={async () => {
             try {
-              const response = await postCalculoPrescricao(dados);
-              const usuarioId = 1;
-              const payloadParaSalvar = {
+              if (!usuario) {
+                console.warn(
+                  "⚠️ Usuário não logado — redirecionando para /login"
+                );
+                navigate("/login");
+                return;
+              }
+
+              // debug rápido: confira cookies disponíveis no browser
+              // console.log("🍪 document.cookie:", document.cookie);
+
+              console.log("➡️ POST /prescricao/calcular (dados):", dados);
+              const resultado = await postCalculoPrescricao(dados);
+              console.log("✅ Resultado calcular:", resultado);
+
+              const usuarioId = usuario?.id;
+              if (!usuarioId) {
+                console.error("Sem usuário no contexto — bloqueando salvar.");
+                // mostre UI de erro ou redirecione para login
+                return;
+              }
+
+              const payloadParaSalvar: PrescricaoSaveDTO = {
                 ...dados,
-                usuarioId: usuarioId,
-              };
-              // console.log("Enviando para salvar:", payloadParaSalvar);
+                usuarioId: usuarioId, // pegue do contexto!
+              } as PrescricaoSaveDTO;
+
+              console.log(" USUARIO ID>>>> ", usuarioId);
+
               console.log(
-                "🔴 PAYLOAD FINAL ENVIADO PARA /salvar:",
+                "➡️ POST /prescricao/salvar (payload):",
                 JSON.stringify(payloadParaSalvar, null, 2)
               );
-              await postSalvarPrescricao(
-                payloadParaSalvar as PrescricaoSaveDTO
-              );
-              console.log("Prescrição salva com sucesso no banco de dados!");
-              setResultado(response);
+
+              const salvo = await postSalvarPrescricao(payloadParaSalvar);
+              console.log("✅ Salvo:", salvo);
+
+              // guarde o resultado do cálculo para a tela de resultado
+              setResultado(resultado);
+
               navigate("/result");
-            } catch (error) {
-              console.error("❌ Erro ao gerar payload:", error);
+            } catch (error: any) {
+              console.error(
+                "❌ Erro ao calcular/salvar prescrição:",
+                error?.response ?? error
+              );
+              // dica: se vier 401/403 aqui, quase sempre é sessão/CSRF
+              // verifique se usou baseURL '/', withCredentials, ensureCsrfOnce
             }
           }}
-          // onNext={() => {
-          //   console.log("Enviando: ", dados);
-          // }}
         />
       )}
     </div>
